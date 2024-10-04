@@ -203,4 +203,5 @@ dependencies:
       - protobuf==3.20.2
       - skl2onnx==1.16.0
       - tinyrpc==1.1.7
-prefix: /home/xiangru/miniconda3/envs/CROWN_Reach
+      - torchdiffeq==0.2.4
+      - git+https://github.com/KaidiXu/onnx2pytorch@325959ed128200459a9634668149a722a6a74797#egg=onnx2pytorch

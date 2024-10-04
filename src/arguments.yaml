@@ -1,0 +1,54 @@
+# Control setting for whether to run the attack analysis
+run_attack: False  # If True, the attack simulation will be executed before verifying
+
+# Verifying Settings
+num_vars: 7  # Total number of system variables
+num_nn_input: 4  # Number of inputs to the neural network model
+num_nn_output: 2  # Number of outputs from the neural network model
+steps: 30  # Total number of simulation steps
+step_size: 0.2  # Step size for each iteration
+
+# ODE-specific parameters controlling the numerical integration process
+ode_step_size: 0.01  # Detailed step size for ODE solver
+ode_order: 4  # Order of the ODE solver (4th order Runge-Kutta)
+cut_off_threshold: 1e-6  # Values below this threshold will be ignored in the computation
+remainder_estimation: [-0.1, 0.1]  # Range for estimating remainder errors
+
+# Defines the initial set of variables with intervals and splits for state space exploration
+# The first num_nn_input (e.g., 4) variables should be the inputs to the neural network, followed by time variable and then outputs
+initial_set:
+  - {name: "x1", interval: [2.9, 3.1], splits: 40}  # Initial value for x1, split into 40 parts
+  - {name: "x2", interval: [2.9, 3.1], splits: 16}  # Initial value for x2, split into 16 parts
+  - {name: "x3", interval: [0, 0], splits: 0}       # Initial value for x3, no splitting required
+  - {name: "x4", interval: [0, 0], splits: 0}       # Initial value for x4, no splitting required
+  - {name: "t", interval: [0, 0], splits: 0}        # Initial time value, no splitting required
+  - {name: "u1", interval: [0, 0], splits: 0}       # Control input u1, no splitting
+  - {name: "u2", interval: [0, 0], splits: 0}       # Control input u2, no splitting
+
+split_vars: [x1, x2]  # Variables x1 and x2 will be split based on the initial set
+
+# Dynamic equations describing the system's behavior over time
+dynamics_expressions:
+  - "x3 * cos(x4)"  # Expression for x1 dynamics
+  - "x3 * sin(x4)"  # Expression for x2 dynamics
+  - "u1"            # Expression for x3 dynamics
+  - "u2"            # Expression for x4 dynamics
+  - "1"             # Constant value for t
+  - "0"             # Zero dynamics for u1
+  - "0"             # Zero dynamics for u2
+
+# Constraints defining unsafe, target, and safe regions for the system
+# These constraints are optional and can be defined based on specific needs
+# Expressions like "-x1 + 1" represent inequalities such as -x1 + 1 <= 0, which defines the range x1 >= 1
+constraints_unsafe: ["-x1 + 1", "x1 - 2", "-x2 + 1", "x2 - 2"]  # Defines unsafe regions/obstacle (optional)
+constraints_target: ["-x1 - 0.5", "x1 - 0.5", "-x2 - 0.5", "x2 - 0.5"]  # Defines target regions (optional)
+constraints_safe: ["-u1 - 1.5", "u1 - 1.5", "-u2 - 1.5", "u2 - 1.5"]  # Defines safe regions (optional)
+
+# Settings for CROWN Verifier
+model_dir: "../ARCH-COMP2024/benchmarks/NAV/networks/nn-nav-point.onnx"  # Path to the neural network model
+input_shape: [-1, 4]  # Shape of the input data to the network
+output_T_shape: [-1, 2, 4]  # Shape of the temporal output from the network
+output_c_shape: [-1, 2]  # Shape of the control output from the network
+output_scale: 1  # Scale factor for output
+output_offset: 0  # Offset applied to the network's output values
+bound_opts: {activation_bound_option: "same-slope"}  # Activation bounding strategy for the neural network (same slope for bounding activations)

@@ -1,0 +1,60 @@
+run_attack: false
+num_vars: 16
+num_nn_input: 12
+num_nn_output: 3
+steps: 50
+step_size: 0.005
+ode_step_size: 0.01
+ode_order: 4
+cut_off_threshold: 1e-6
+remainder_estimation: [-0.1, 0.1]
+
+initial_set:
+  - {name: "x1", interval: [-0.4, 0.4], splits: 8}
+  - {name: "x2", interval: [-0.4, 0.4], splits: 8}
+  - {name: "x3", interval: [-0.4, 0.4], splits: 8}
+  - {name: "x4", interval: [-0.4, 0.4], splits: 2}
+  - {name: "x5", interval: [-0.4, 0.4], splits: 1}
+  - {name: "x6", interval: [-0.4, 0.4], splits: 1}
+  - {name: "x7", interval: [0, 0], splits: 0}
+  - {name: "x8", interval: [0, 0], splits: 0}
+  - {name: "x9", interval: [0, 0], splits: 0}
+  - {name: "x10", interval: [0, 0], splits: 0}
+  - {name: "x11", interval: [0, 0], splits: 0}
+  - {name: "x12", interval: [0, 0], splits: 0}
+  - {name: "t", interval: [0, 0], splits: 0}
+  - {name: "u1", interval: [0, 0], splits: 0}
+  - {name: "u2", interval: [0, 0], splits: 0}
+  - {name: "u3", interval: [0, 0], splits: 0}
+
+split_vars: [x1, x2, x3, x4, x5, x6]
+
+dynamics_expressions:
+  - "cos(x8)*cos(x9)*x4 + (sin(x7)*sin(x8)*cos(x9) - cos(x7)*sin(x9))*x5 + (cos(x7)*sin(x8)*cos(x9) + sin(x7)*sin(x9))*x6"
+  - "cos(x8)*sin(x9)*x4 + (sin(x7)*sin(x8)*sin(x9) - cos(x7)*cos(x9))*x5 + (cos(x7)*sin(x8)*sin(x9) + sin(x7)*cos(x9))*x6"
+  - "sin(x8)*x4 - sin(x7)*cos(x8)*x5 - cos(x7)*cos(x8)*x6"
+  - "x12*x5 * x11*x6 - 9.81 *sin(x8)"
+  - "x10*x6 - x11*x6 - 9.81 *sin(x8)"
+  - "x11*x4 - x10*x5 + 9.81 *cos(x8)*cos(x7) - 9.81 - u1 / 1.4"
+  - "x10 + sin(x7)*sin(x8)/cos(x8)*x11 + cos(x7)*sin(x8)/cos(x8)*x12"
+  - "cos(x7)*x11 - sin(x7)*x12"
+  - "sin(x7)*x11/cos(x8) - cos(x7)*x12/cos(x8)"
+  - "x11*x12*(0.054 - 0.104) / 0.054 + u2 / 0.054"
+  - "(0.104 - 0.054)*x10*x12 / 0.054 + u3 / 0.054"
+  - "0"
+  - "1"
+  - "0"
+  - "0"
+  - "0"
+
+constraints_unsafe: ["-x3 + 0.94", "x3 - 1.06"]
+
+constraints_target: ["-x1 + 1", "x1 - 2"]
+
+model_dir: "../ARCH-COMP2024/benchmarks/QUAD/quad_controller_3_64_torch.onnx"
+input_shape: [-1, 12]
+output_T_shape: [-1, 3, 12]
+output_c_shape: [-1, 3]
+output_scale: 1
+output_offset: 0
+bound_opts: {activation_bound_option: "same-slope"}

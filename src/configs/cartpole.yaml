@@ -1,0 +1,32 @@
+run_attack: False
+num_vars: 6
+num_nn_input: 4
+num_nn_output: 1
+steps: 50
+step_size: 0.02
+ode_step_size: 0.05
+ode_order: 6
+cut_off_threshold: 1e-6
+remainder_estimation: [-0.1, 0.1]
+initial_set:
+  - {name: "x1", interval: [-0.0375, -0.03125]}
+  - {name: "x2", interval: [-0.015625, -0.0125]}
+  - {name: "x3", interval: [-0.00625, 0]}
+  - {name: "x4", interval: [-0.007375, -0.00625]}
+  - {name: "t", interval: [0, 0]}
+  - {name: "u1", interval: [0, 0]}
+dynamics_expressions:
+  - "x2"
+  - "2 * u1"
+  - "x4"
+  - "(0.08*0.41*(9.8 * sin(x3) - 2*u1 * cos(x3)) - 0.0021 * x4) / 0.0105"
+  - "1"
+  - "0"
+constraints_target: ["-x1 - 0.001", "x1 - 0.001", "-x3 - 0.001", "x3 - 0.001", "-x4 - 0.001", "x4 - 0.001"]
+model_dir: "../ARCH-COMP2024/benchmarks/CartPole/model.onnx"
+input_shape: [-1, 4]
+output_T_shape: [-1, 1, 4]
+output_c_shape: [-1, 1]
+output_scale: 1
+output_offset: 0
+bound_opts: {activation_bound_option: "same-slope", conv_mode: "matrix"}

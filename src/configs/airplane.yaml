@@ -1,0 +1,58 @@
+run_attack: False
+num_vars: 19
+num_nn_input: 12
+num_nn_output: 6
+steps: 20
+step_size: 0.1
+ode_step_size: 0.01
+ode_order: 6
+cut_off_threshold: 1e-6
+remainder_estimation: [-0.01, 0.01]
+initial_set:
+  - {name: "x", interval: [0, 0]}
+  - {name: "y", interval: [0, 0]}
+  - {name: "z", interval: [0, 0]}
+  - {name: "u", interval: [1, 1]}
+  - {name: "v", interval: [1, 1]}
+  - {name: "w", interval: [1, 1]}
+  - {name: "phi", interval: [0.9, 0.9]}
+  - {name: "theta", interval: [0.9, 0.9]}
+  - {name: "psi", interval: [0.9, 0.9]}
+  - {name: "r", interval: [0, 0]}
+  - {name: "p", interval: [0, 0]}
+  - {name: "q", interval: [0, 0]}
+  - {name: "t", interval: [0, 0]}
+  - {name: "Fx", interval: [0, 0]}
+  - {name: "Fy", interval: [0, 0]}
+  - {name: "Fz", interval: [0, 0]}
+  - {name: "Mx", interval: [0, 0]}
+  - {name: "My", interval: [0, 0]}
+  - {name: "Mz", interval: [0, 0]}
+dynamics_expressions:
+  - "cos(psi)*cos(theta) * u + (-sin(psi)*cos(phi) + cos(psi)*sin(theta)*sin(phi)) * v + (sin(psi)*sin(phi) + cos(psi)*sin(theta)*cos(phi)) * w"
+  - "sin(psi)*cos(theta) * u + (cos(psi)*cos(phi) + sin(psi)*sin(theta)*sin(phi)) * v + (-cos(psi)*sin(phi) + sin(psi)*sin(theta)*cos(phi)) * w"
+  - "-sin(theta) * u + cos(theta)*sin(phi) * v + cos(theta)*cos(phi) * w"
+  - "-sin(theta) + Fx - q * w + r * v"
+  - "cos(theta) * sin(phi) + Fy - r * u + p * w"
+  - "cos(theta) * cos(phi) + Fz - p * v + q * u"
+  - "(cos(theta) * p + sin(theta)*sin(phi) * q + sin(theta)*cos(phi) * r) / cos(theta)"
+  - "(cos(theta)*cos(phi) * q - cos(theta) * sin(phi) * r) / cos(theta)"
+  - "(sin(phi) * q + cos(phi) * r) / cos(theta)"
+  - "Mz"
+  - "Mx"
+  - "My"
+  - "1"
+  - "0"
+  - "0"
+  - "0"
+  - "0"
+  - "0"
+  - "0"
+constraints_safe: ["-y - 1", "y - 1", "-phi - 1", "phi - 1", "-theta - 1", "theta - 1", "-psi - 1", "psi - 1"]
+model_dir: "../ARCH-COMP2024/benchmarks/Airplane/controller_airplane.onnx"
+input_shape: [-1, 1, 12]
+output_T_shape: [-1, 6, 12]
+output_c_shape: [-1, 6]
+output_scale: 1
+output_offset: 0
+bound_opts: {activation_bound_option: "same-slope"}

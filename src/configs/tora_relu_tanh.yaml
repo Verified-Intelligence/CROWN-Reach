@@ -1,0 +1,34 @@
+run_attack: False
+num_vars: 6
+num_nn_input: 4
+num_nn_output: 1
+steps: 10
+step_size: 0.5
+ode_step_size: 0.01
+ode_order: 6
+cut_off_threshold: 1e-6
+remainder_estimation: [-0.01, 0.01]
+initial_set:
+  - {name: "x1", interval: [-0.77, -0.75]}
+  - {name: "x2", interval: [-0.45, -0.43]}
+  - {name: "x3", interval: [0.51, 0.54]}
+  - {name: "x4", interval: [-0.3, -0.28]}
+  - {name: "t", interval: [0, 0]}
+  - {name: "u1", interval: [0, 0]}
+dynamics_expressions:
+  - "x2"
+  - "-x1 + 0.1 * sin(x3)"
+  - "x4"
+  - "u1"
+  - "1"
+  - "0"
+constraints_target: ["-x1 - 0.1", "x1 - 0.2", "-x2 - 0.9", "x2 + 0.6"]
+model_dir: "../ARCH-COMP2024/benchmarks/Tora_Heterogeneous/nn_tora_relu_tanh.onnx"
+input_shape: [-1, 4]
+output_T_shape: [-1, 1, 4]
+output_c_shape: [-1, 1]
+output_scale: 11
+output_offset: 0
+plot_vars: ["x1", "x2"]
+plot_name: "TORA_relu_tanh"
+bound_opts: {activation_bound_option: "same-slope"}

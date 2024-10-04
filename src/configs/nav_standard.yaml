@@ -1,0 +1,36 @@
+run_attack: False
+num_vars: 7
+num_nn_input: 4
+num_nn_output: 2
+steps: 30
+step_size: 0.2
+ode_step_size: 0.01
+ode_order: 4
+cut_off_threshold: 1e-6
+remainder_estimation: [-0.1, 0.1]
+initial_set:
+  - {name: "x1", interval: [2.9, 3.1], splits: 40}
+  - {name: "x2", interval: [2.9, 3.1], splits: 16}
+  - {name: "x3", interval: [0, 0], splits: 0}
+  - {name: "x4", interval: [0, 0], splits: 0}
+  - {name: "t", interval: [0, 0], splits: 0}
+  - {name: "u1", interval: [0, 0], splits: 0}
+  - {name: "u2", interval: [0, 0], splits: 0}
+split_vars: [x1, x2]
+dynamics_expressions: 
+  - "x3 * cos(x4)" 
+  - "x3 * sin(x4)" 
+  - "u1" 
+  - "u2" 
+  - "1" 
+  - "0" 
+  - "0"
+constraints_unsafe: ["-x1 + 1", "x1 - 2", "-x2 + 1", "x2 - 2"]
+constraints_target: ["-x1 - 0.5", "x1 - 0.5", "-x2 - 0.5", "x2 - 0.5"]
+model_dir: "../ARCH-COMP2024/benchmarks/NAV/networks/nn-nav-point.onnx"
+input_shape: [-1, 4]
+output_T_shape: [-1, 2, 4]
+output_c_shape: [-1, 2]
+output_scale: 1
+output_offset: 0
+bound_opts: {activation_bound_option: "same-slope"}
