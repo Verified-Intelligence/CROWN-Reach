@@ -14,8 +14,6 @@
 import os
 import sys
 import yaml
-CROWN_DIR = "../../auto_LiRPA"
-sys.path.append(CROWN_DIR)
 
 import torch
 import onnx
