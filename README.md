@@ -1,11 +1,8 @@
 # CROWN-Reach
 
-CROWN-Reach is a neural-network control-system reachability tool built around:
+CROWN-Reach is a new open-source tool for reachability analysis of neural network control systems developed at UIUC. It aims to strengthen and extend the successful [alpha-beta-CROWN neural network verifier](https://github.com/Verified-Intelligence/alpha-beta-CROWN) to the setting of neural network controller verification. CROWN-Reach consists of four main components: bound-propagation for efficient analysis of neural network controllers, Taylor model for plant analysis, branch-and-bound to refine the reachable set, and a sampling-based falsifier. For the analysis of neural network controllers, we use linear relaxation based perturbation analysis (LiRPA) methods such as [CROWN](https://arxiv.org/pdf/1811.00866) and [alpha-CROWN](https://arxiv.org/pdf/2011.13824) with extensions to cooperate with Taylor Model flowpipe computation.
 
-- CROWN-based neural bound propagation in Python.
-- Flow* Taylor-model plant analysis in C++.
-- A branch-and-bound refinement loop in C++.
-- A falsification front-end (`src/attack.py`) before full verification.
+Our tool is based on the [auto_LiRPA](https://github.com/Verified-Intelligence/auto_LiRPA) library, which can automatically compute linear functional over-approximations for neural networks with various activation functions, including ReLU, tanh, and sigmoid, as well as neural networks with general architectures (e.g., residual blocks and custom operators). We use the [Flow*](https://github.com/chenxin415/flowstar) library for analyzing the plant with continuous dynamics using Taylor models, and these Taylor models are symbolically combined with the linear bounds from CROWN to form the reachable set of the entire system. The branch-and-bound refinement process splits the input state space and utilizes parallelization (including both GPU and CPU) to achieve quick and precise analysis. The bound propagation process can be accelerated on GPUs and can scale to very large networks, while the computation of Taylor models is executed on CPUs using multi-threading. A paper describing the algorithm details of CROWN-Reach is currently being prepared.
 
 The repository has two execution modes:
 
